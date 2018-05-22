@@ -1,1 +1,1 @@
-# MM_gravitationa_million_body_problem
+# MM_gravitational_million_body_problem
