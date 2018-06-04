@@ -32,9 +32,6 @@ void compute_coordinates()
         velocities[3]+=(a[4]*dT);
         coordinates[3]+=(velocities[3]*dT);
         coordinates[4]+=(velocities[4]*dT);
-
-    }
-
     //printf("coordinates[1]: %f coordinates[2]: %f coordinates[3]: %f\n", coordinates[0], coordinates[1], coordinates[2]);
     //printf("coordinates[4]: %f coordinates[5]: %f coordinates[6]: %f\n", coordinates[3], coordinates[4], coordinates[5]);
 }
