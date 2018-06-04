@@ -4,66 +4,94 @@
 #include<time.h>
 #include "helper.h"
 
-#define dT 10 //time difference
-#define eps 0.000001 //in case of dividing by 0
-double grav_forces[XYZ];
-double M[NUMBER_OF_BODIES];
-double a[XYZ];
+#define dT 1e-5 //time difference
 
+double F[XYZ];
 
-double G = 0.000667;
-
-
-void compute_coordinates()
+double generate_rand(int min, int max)
 {
-        double dx = coordinates[0] -coordinates[3];
-        double dy = coordinates[1] - coordinates[4];
-        double D = sqrt(dx*dx + dy*dy);
-        // if(D == 0){
-        //     printf("COLLISION!!\n");
-        //     break;
-        // }
-        double angle_radians = atan2(dy,dx);
-
-        double F = (G*M[0])/ (D*D);
-        a[3] = F*cos(angle_radians);
-        a[4] = F*sin(angle_radians);
-        velocities[3]+=(a[3] *dT);
-        velocities[3]+=(a[4]*dT);
-        coordinates[3]+=(velocities[3]*dT);
-        coordinates[4]+=(velocities[4]*dT);
-    //printf("coordinates[1]: %f coordinates[2]: %f coordinates[3]: %f\n", coordinates[0], coordinates[1], coordinates[2]);
-    //printf("coordinates[4]: %f coordinates[5]: %f coordinates[6]: %f\n", coordinates[3], coordinates[4], coordinates[5]);
+  return min + (double)rand() / (double) (RAND_MAX) * (max - min + 1);
 }
 
-int main(int argc, char *argv[])
+void generate_parameters()
 {
-    for(int i = 0; i < XYZ;i++)
+    masses[0] = 1000000;
+    for (int i = 1; i < NUMBER_OF_BODIES; i++)
     {
-        velocities[i] = 0;
-        grav_forces[i] = 0;
-        coordinates[i] = 0;
-        a[i] = 0;
+        masses[i] = 1;
     }
 
-    coordinates[0] = 320;
-    coordinates[1] = 240;
+    //first we position black hole in the middle
+    coordinates[0] = 0;
+    coordinates[1] = 0;
     coordinates[2] = 0;
-
-    coordinates[3] = 170;
-    coordinates[4] = 240;
-    coordinates[5] = 0;
-
-    M[0] = 1098900;
-    M[1] = 0.5974;
-
 
     velocities[0] = 0;
     velocities[1] = 0;
     velocities[2] = 0;
-    velocities[3] = 0;
-    velocities[4] = 2;
-    velocities[5] = 0;
+
+    int i = 3; 
+    while (i < XYZ)
+    {
+        double x = generate_rand(-R, R);
+        double y = generate_rand(-R, R);
+        double z = generate_rand(-H, H);
+
+        if (pow(x, 2) + pow(y, 2) < pow(R, 2))
+        {
+            coordinates[i] = x;
+            coordinates[i+1] = y;
+            coordinates[i+2] = z;
+            
+            double r = sqrt(x*x + y*y + z*z);
+            double v = sqrt(masses[0]/r);
+            velocities[i] = -v * coordinates[i+1]/r;
+            velocities[i+1] = v * coordinates[i]/r;
+            velocities[i+2] = 0;
+
+            i+=3;
+        }  
+    }
+}
+
+void compute_coordinates()
+{
+        for(int i = 0; i <  XYZ; i+=3){F[i] = 0;}
+        
+        for(int i = 0; i < XYZ; i+=3){
+        double dx,dy,dz,D,F1,F2,F3;
+            for(int j = 0; j < XYZ; j+=3){
+                if(i != j){
+                dx = coordinates[i] - coordinates[j];
+                dy = coordinates[i+1] - coordinates[j+1];
+                dz = coordinates[i+2] - coordinates[j+2];
+                D = sqrt(dx*dx + dy*dy + dz*dz);
+                D = pow(D,3);
+                F1 = (dx/(D+eps))*masses[i/3]*masses[j/3];
+                F2 = (dy/(D+eps))*masses[i/3]*masses[j/3];
+                F3 =  (dz/(D+eps))*masses[i/3]*masses[j/3];
+
+                F[i]-=F1;
+                F[i+1]-=F2;
+                F[i+2]-=F3;
+                }
+            }
+        }
+        for(int i = 0; i < XYZ; i+=3){
+            coordinates[i]+=(velocities[i]*dT);
+            coordinates[i+1]+=(velocities[i+1]*dT);
+            coordinates[i+2]+=(velocities[i+2]*dT);
+            
+            //velocities[i] = 2;
+            velocities[i]+=((F[i]/masses[i/3])*dT); 
+            velocities[i+1]+=((F[i+1]/masses[i/3])*dT);
+            velocities[i+2]+=((F[i+2]/masses[i/3])*dT);
+        }
+}
+
+int main(int argc, char *argv[])
+{
+    generate_parameters();
 
     visualize(argc, argv);
 

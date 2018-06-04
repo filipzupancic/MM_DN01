@@ -7,16 +7,14 @@
 /* Global variables */
 char title[] = "million_body_problem";
 
-int refresh_interval = 1000;        
-
-float red=1.0f, blue=1.0f, green=1.0f;
+int refresh_interval = 10;        
 
 //angle of rotation for the camera direction
 float angle=0.0;
 //actual vector representing the camera's direction
-float lx=0.0f, ly=0.0f, lz=-1.0f;
+float lz=-1.0f;
 //XZ position of the camera
-float x=0.0f, y=1.0f,z=5.0f;
+float x=0.0f, y=2.0f,z=70.0f;
 
 //GLfloat eye[] = {0., 0., 20.};
 
@@ -30,11 +28,6 @@ void initGL() {
    glHint(GL_PERSPECTIVE_CORRECTION_HINT, GL_NICEST);
 }
 
-int generate_rand(int min, int max)
-{
-  return min + (int) (rand() / (double) (RAND_MAX) * (max - min + 1));
-}
-
 //function displays objects in space
 void display() 
 {
@@ -44,42 +37,33 @@ void display()
   // Reset transformations
   glLoadIdentity();
   // Set the camera
-  gluLookAt(  x, y, z,
-      x+lx, y+ly,  z+lz,
-      0.0f, 1.0f,  0.0f);
+  gluLookAt(  x,    y,     z,
+              x,    y,     z+lz,
+              0.0f, 1.0f,  0.0f);
 
-  //printf("x1: %f z1: %f x2: %f z2: %f\n", x, z, x+lx, z+lz);
+  compute_coordinates();
 
-  //compute_coordinates();
-  //coordinates = cv.coordinates;
-  //int len_coordinates = sizeof(coordinates)/sizeof(double);
-  
-  //printf("len_coordinates: %d\n", len_coordinates);
-
-  glColor3f(0.0f, 1.0f, 0.0f);
-  glPointSize(3.);
+  //start drawing points
   glBegin(GL_POINTS);
-  for (int i = 0; i < 1000; i++)
+
+  //color and size of particles 
+  glColor3f(1.0f, 1.0f, 1.0f);
+  glPointSize(0.5);
+  
+  for (int i = 3; i < XYZ; i+=3)
   {
-    //glTranslatef(generate_rand(1,100), generate_rand(1,100), generate_rand(1,100));
-    //glutSolidSphere(1,20,20);
-    glVertex3d(generate_rand(1,100), generate_rand(1,100), generate_rand(1,100));
-  }
-  /*
-  for (int i = 0; i < len_coordinates; i+=3)
-  {
-    glVertex3d(coordinates[i], coordinates[i+1], coordinates[i+2]);
+    glVertex3d(coordinates[i+1], coordinates[i], coordinates[i+2]);
   } 
-  */
+  
   glEnd();
 
   glutSwapBuffers();
 }
 
+//reads input from keyboard
 void keyboard(unsigned char key, int x, int y){
-    switch(key){
-        case 'w': ly+=0.1; break;
-        case 's': ly-=0.1; break;
+    switch(key)
+    {
         case 'q': exit(0); break;
     }
 }
@@ -89,23 +73,12 @@ void user_input(int key, int x, int y) {
 
   float fraction = 0.1f;
 
-  switch (key) {
-    case GLUT_KEY_LEFT :
-      angle -= 0.01f;
-      lx = sin(angle);
-      lz = -cos(angle);
-      break;
-    case GLUT_KEY_RIGHT :
-      angle += 0.01f;
-      lx = sin(angle);
-      lz = -cos(angle);
-      break;
+  switch (key) 
+  {
     case GLUT_KEY_UP :
-      x += lx * fraction;
       z += lz * fraction;
       break;
     case GLUT_KEY_DOWN :
-      x -= lx * fraction;
       z -= lz * fraction;
       break;
   }
@@ -169,7 +142,7 @@ void visualize (int argc, char* argv[]) {
   glutMainLoop();            
 }
 
-
+/*
 //main - only for testing purposes
 //code will be executed from solution.c
 int main(int argc, char *argv[])
@@ -177,4 +150,4 @@ int main(int argc, char *argv[])
   visualize(argc, argv);
 
   return 0;
-}
+}*/
