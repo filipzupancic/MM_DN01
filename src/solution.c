@@ -1,7 +1,8 @@
+ 
 #include <math.h> 
-#include<stdio.h>
-#include<stdlib.h>
-#include<time.h>
+#include <stdio.h>
+#include <stdlib.h>
+#include <time.h>
 #include "helper.h"
 
 #define dT 1e-5 //time difference
@@ -10,7 +11,7 @@ double F[XYZ];
 
 double generate_rand(int min, int max)
 {
-  return min + (double)rand() / (double) (RAND_MAX) * (max - min + 1);
+    return min + (double)rand() / (double) (RAND_MAX) * (max - min + 1);
 }
 
 void generate_parameters()
@@ -56,37 +57,37 @@ void generate_parameters()
 
 void compute_coordinates()
 {
-        for(int i = 0; i <  XYZ; i+=3){F[i] = 0;}
-        
-        for(int i = 0; i < XYZ; i+=3){
-        double dx,dy,dz,D,F1,F2,F3;
-            for(int j = 0; j < XYZ; j+=3){
-                if(i != j){
-                dx = coordinates[i] - coordinates[j];
-                dy = coordinates[i+1] - coordinates[j+1];
-                dz = coordinates[i+2] - coordinates[j+2];
-                D = sqrt(dx*dx + dy*dy + dz*dz);
-                D = pow(D,3);
-                F1 = (dx/(D+eps))*masses[i/3]*masses[j/3];
-                F2 = (dy/(D+eps))*masses[i/3]*masses[j/3];
-                F3 =  (dz/(D+eps))*masses[i/3]*masses[j/3];
+    for(int i = 0; i <  XYZ; i+=3){F[i] = 0;}
 
-                F[i]-=F1;
-                F[i+1]-=F2;
-                F[i+2]-=F3;
-                }
+    for(int i = 0; i < XYZ; i+=3){
+        double dx,dy,dz,D,F1,F2,F3;
+        for(int j = 0; j < XYZ; j+=3){
+            if(i != j){
+            dx = coordinates[i] - coordinates[j];
+            dy = coordinates[i+1] - coordinates[j+1];
+            dz = coordinates[i+2] - coordinates[j+2];
+            D = sqrt(dx*dx + dy*dy + dz*dz);
+            D = pow(D,3);
+            F1 = (dx/(D+eps))*masses[i/3]*masses[j/3];
+            F2 = (dy/(D+eps))*masses[i/3]*masses[j/3];
+            F3 =  (dz/(D+eps))*masses[i/3]*masses[j/3];
+
+            F[i]-=F1;
+            F[i+1]-=F2;
+            F[i+2]-=F3;
             }
         }
-        for(int i = 0; i < XYZ; i+=3){
-            coordinates[i]+=(velocities[i]*dT);
-            coordinates[i+1]+=(velocities[i+1]*dT);
-            coordinates[i+2]+=(velocities[i+2]*dT);
-            
-            //velocities[i] = 2;
-            velocities[i]+=((F[i]/masses[i/3])*dT); 
-            velocities[i+1]+=((F[i+1]/masses[i/3])*dT);
-            velocities[i+2]+=((F[i+2]/masses[i/3])*dT);
-        }
+    }
+    for(int i = 0; i < XYZ; i+=3){
+        coordinates[i]+=(velocities[i]*dT);
+        coordinates[i+1]+=(velocities[i+1]*dT);
+        coordinates[i+2]+=(velocities[i+2]*dT);
+        
+        //velocities[i] = 2;
+        velocities[i]+=((F[i]/masses[i/3])*dT); 
+        velocities[i+1]+=((F[i+1]/masses[i/3])*dT);
+        velocities[i+2]+=((F[i+2]/masses[i/3])*dT);
+    }
 }
 
 int main(int argc, char *argv[])
@@ -94,6 +95,5 @@ int main(int argc, char *argv[])
     generate_parameters();
 
     visualize(argc, argv);
-
     return 0;
 }
