@@ -1,9 +1,10 @@
 #ifndef helper
 #define helper
 
-#define NUMBER_OF_BODIES 500  
+#define NUMBER_OF_BODIES 1500   
 #define XYZ 3*NUMBER_OF_BODIES
 #define R 20
+#define R_min 18
 #define H 2
 #define eps 0
 

@@ -47,12 +47,18 @@ void display()
   glBegin(GL_POINTS);
 
   //color and size of particles 
+  glColor3f(1.0f, 0.0f, 0.0f);
+  glPointSize(100.0);
+
+  glVertex3d(coordinates[0], coordinates[1], coordinates[2]);
+
+  //color and size of particles 
   glColor3f(1.0f, 1.0f, 1.0f);
-  glPointSize(0.5);
+  glPointSize(1.5);
   
   for (int i = 3; i < XYZ; i+=3)
   {
-    glVertex3d(coordinates[i+1], coordinates[i], coordinates[i+2]);
+    glVertex3d(coordinates[i], coordinates[i+1], coordinates[i+2]);
   } 
   
   glEnd();

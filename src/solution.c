@@ -5,7 +5,8 @@
 #include <time.h>
 #include "helper.h"
 
-#define dT 1e-5 //time difference
+#define dT 1e-4 //time difference
+int counter=0;
 
 double F[XYZ];
 
@@ -16,7 +17,7 @@ double generate_rand(int min, int max)
 
 void generate_parameters()
 {
-    masses[0] = 1000000;
+    masses[0] = 10000000;
     for (int i = 1; i < NUMBER_OF_BODIES; i++)
     {
         masses[i] = 1;
@@ -38,7 +39,7 @@ void generate_parameters()
         double y = generate_rand(-R, R);
         double z = generate_rand(-H, H);
 
-        if (pow(x, 2) + pow(y, 2) < pow(R, 2))
+        if (pow(x, 2) + pow(y, 2) < pow(R, 2) && pow(x, 2) + pow(y, 2) > pow(R-R_min, 2))
         {
             coordinates[i] = x;
             coordinates[i+1] = y;
@@ -46,6 +47,7 @@ void generate_parameters()
             
             double r = sqrt(x*x + y*y + z*z);
             double v = sqrt(masses[0]/r);
+           //double v = 0;
             velocities[i] = -v * coordinates[i+1]/r;
             velocities[i+1] = v * coordinates[i]/r;
             velocities[i+2] = 0;
@@ -56,13 +58,15 @@ void generate_parameters()
 }
 
 void compute_coordinates()
-{
-    for(int i = 0; i <  XYZ; i+=3){F[i] = 0;}
+{   
+    clock_t begin = clock();
+    for(int i = 0; i <  XYZ; i++){F[i] = 0;}
 
+        #pragma omp parallel
+        #pragma omp for
     for(int i = 0; i < XYZ; i+=3){
         double dx,dy,dz,D,F1,F2,F3;
-        for(int j = 0; j < XYZ; j+=3){
-            if(i != j){
+        for(int j = i+3; j < XYZ; j+=3){
             dx = coordinates[i] - coordinates[j];
             dy = coordinates[i+1] - coordinates[j+1];
             dz = coordinates[i+2] - coordinates[j+2];
@@ -75,7 +79,11 @@ void compute_coordinates()
             F[i]-=F1;
             F[i+1]-=F2;
             F[i+2]-=F3;
-            }
+
+            F[j]+=F1;
+            F[j+1]+=F2;
+            F[j+2]+=F3;
+
         }
     }
     for(int i = 0; i < XYZ; i+=3){
@@ -88,10 +96,18 @@ void compute_coordinates()
         velocities[i+1]+=((F[i+1]/masses[i/3])*dT);
         velocities[i+2]+=((F[i+2]/masses[i/3])*dT);
     }
+    counter++;
+clock_t end = clock();
+        double time_spent = (double)(end - begin);
+        if(counter%100 == 0){
+        printf("Time spent: %f\n",time_spent);
+        }
+        
 }
 
 int main(int argc, char *argv[])
 {
+
     generate_parameters();
 
     visualize(argc, argv);
