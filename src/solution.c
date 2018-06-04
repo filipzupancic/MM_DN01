@@ -16,15 +16,16 @@ double G = 0.000667;
 
 void compute_coordinates()
 {
-    
-    while(1){
+    int t = 0;
+    while(t < 100){
+
         double dx = coordinates[0] -coordinates[3];
         double dy = coordinates[1] - coordinates[4];
         double D = sqrt(dx*dx + dy*dy);
-        if(D == 0){
-            printf("COLLISION!!\n");
-            break;
-        }
+        // if(D == 0){
+        //     printf("COLLISION!!\n");
+        //     break;
+        // }
         double angle_radians = atan2(dy,dx);
 
         double F = (G*M[0])/ (D*D);
@@ -34,6 +35,9 @@ void compute_coordinates()
         velocities[3]+=(a[4]*dT);
         coordinates[3]+=(velocities[3]*dT);
         coordinates[4]+=(velocities[4]*dT);
+
+    t++;
+
     }
 
     //printf("coordinates[1]: %f coordinates[2]: %f coordinates[3]: %f\n", coordinates[0], coordinates[1], coordinates[2]);
