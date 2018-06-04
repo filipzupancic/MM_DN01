@@ -24,9 +24,9 @@
 //double velocities[XYZ];
 
 /* Array  of particles gravitational forces: 
-*   Ex: grav_forces[0] = F(v(x0))
-        grav_forces[1] = F(v(y0))
-        grav_forces[2] = F(v(z0))
+*   Ex: grav_forces[0] = F((x0))
+        grav_forces[1] = F((y0))
+        grav_forces[2] = F((z0))
 */
 double grav_forces[XYZ];
 
@@ -34,56 +34,84 @@ double grav_forces[XYZ];
 double force_down;
 double force_up;
 
+
 void compute_coordinates()
 {
    clock_t start_t, end_t, total_t;
    start_t = clock();
 
+
     double time = dT;
     while(time  < 30){
+
+    double t = 0;
+    while(t  < 150){
+
      for(int i = 0; i <XYZ; i+=3){
         //printf("%d. particle | coordinate X:%10f | velocity_X: %10f | force_X:%10f\n",i/3,coordinates[i], velocities[i], grav_forces[i]);
         for(int j = 0; j < XYZ; j+=3){
             if(i != j){
                 //we calculate the sum of all particles on a singular particle in its own direction
+                if(coordinates[i] < coordinates[j]){
+                             //current force on particle i in direction x
+                        force_down = (abs(coordinates[i] - coordinates[j]));
+                        force_down = force_down*force_down*force_down;
+                        force_up = coordinates[i] - coordinates[j];
+                        grav_forces[i]+= force_up/(force_down+eps);
+                        //current force on particle i in direction y
 
-                //current force on particle i in direction x
-                force_down = (abs(coordinates[i] - coordinates[j]+eps));
-                force_down = force_down*force_down*force_down;
-                force_up = coordinates[i] - coordinates[j];
-                grav_forces[i]+= force_up/force_down;  
-                //current force on particle i in direction y
+                        force_down = (abs(coordinates[i+1] - coordinates[j+1]));
+                        force_down = force_down*force_down*force_down;
+                        force_up = coordinates[i+1] - coordinates[j+1];
+                        grav_forces[i+1]+= force_up/(force_down+eps); 
 
-                force_down = (abs(coordinates[i+1] - coordinates[j+1]+eps));
-                force_down = force_down*force_down*force_down;
-                force_up = coordinates[i+1] - coordinates[j+1];
-                grav_forces[i+1]+= force_up/force_down; 
+                        //current force on particle i in direction z
+                        force_down = (abs(coordinates[i+2] - coordinates[j+2]));
+                        force_down = force_down*force_down*force_down;
+                        force_down+=eps;
+                        force_up = coordinates[i+2] - coordinates[j+2];
+                        grav_forces[i+2]+= force_up/(force_down +eps); 
+                }else{
+                             //current force on particle i in direction x
+                        force_down = (abs(coordinates[i] - coordinates[j]));
+                        force_down = force_down*force_down*force_down;
+                        force_up = coordinates[i] - coordinates[j];
+                        grav_forces[i]-= force_up/(force_down+eps);
+                        //current force on particle i in direction y
 
-                //current force on particle i in direction z
-                force_down = (abs(coordinates[i+2] - coordinates[j+2]+eps));
-                force_down = force_down*force_down*force_down;
-                force_up = coordinates[i+2] - coordinates[j+2];
-                grav_forces[i+2]+= force_up/force_down; 
+                        force_down = (abs(coordinates[i+1] - coordinates[j+1]));
+                        force_down = force_down*force_down*force_down;
+                        force_up = coordinates[i+1] - coordinates[j+1];
+                        grav_forces[i+1] -= force_up/(force_down+eps); 
+
+                        //current force on particle i in direction z
+                        force_down = (abs(coordinates[i+2] - coordinates[j+2]));
+                        force_down = force_down*force_down*force_down;
+                        force_down+=eps;
+                        force_up = coordinates[i+2] - coordinates[j+2];
+                        grav_forces[i+2]-= force_up/(force_down +eps); 
+                    
+                }
+                    
             }
         }
         // we upgrade our current velocity and coordinate x of particle i
-        grav_forces[i]*=(-1);
+        //    grav_forces[i]*=(-1);
         velocities[i]+=(dT*grav_forces[i]);
         coordinates[i]+=(dT*velocities[i]);
 
         //changing velocity and coordinate y of particle i
-        grav_forces[i+1]*=(-1);
+          //  grav_forces[i+1]*=(-1);
         velocities[i+1]+=(dT*grav_forces[i+1]);
         coordinates[i+1]+=(dT*velocities[i+1]);
 
         //upgrading coordinate z
-        grav_forces[i+2]*=(-1);
+         //grav_forces[i+2]*=(-1);
         velocities[i+2]+=(dT*grav_forces[i+2]);
         coordinates[i+2]+=(dT*velocities[i+2]);
         
     }
-
-        time+=dT;
+        t+=dT;
     }
 
     printf("coordinates[1]: %f coordinates[2]: %f coordinates[3]: %f\n", coordinates[0], coordinates[1], coordinates[2]);
