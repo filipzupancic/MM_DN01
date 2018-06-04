@@ -16,9 +16,6 @@ double G = 0.000667;
 
 void compute_coordinates()
 {
-    int t = 0;
-    while(t < 100){
-
         double dx = coordinates[0] -coordinates[3];
         double dy = coordinates[1] - coordinates[4];
         double D = sqrt(dx*dx + dy*dy);
@@ -35,8 +32,6 @@ void compute_coordinates()
         velocities[3]+=(a[4]*dT);
         coordinates[3]+=(velocities[3]*dT);
         coordinates[4]+=(velocities[4]*dT);
-
-    t++;
 
     }
 
@@ -57,6 +52,7 @@ int main(int argc, char *argv[])
     coordinates[0] = 320;
     coordinates[1] = 240;
     coordinates[2] = 0;
+
     coordinates[3] = 170;
     coordinates[4] = 240;
     coordinates[5] = 0;
