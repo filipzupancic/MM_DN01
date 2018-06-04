@@ -20,7 +20,7 @@ void compute_coordinates()
                  dy = coordinates[i+1]- coordinates[j+1];
                  dz = coordinates[i+2] - coordinates[j+2];
                  D = sqrt(dx*dx + dy*dy + dz*dz);
-                D = pow(D,3);
+                 D = pow(D,3);
                  F1 = (dx/D)*masses[i]*masses[j];
                  F2 = (dy/D)*masses[i]*masses[j];
                  F3 =  (dz/D)*masses[i]*masses[j];
@@ -41,39 +41,10 @@ void compute_coordinates()
             velocities[i+2]+=((F[i+2]/masses[i])*dT);
         }
 
-       
-       
-
-     
 }
 
 int main(int argc, char *argv[])
 {
-    // for(int i = 0; i < XYZ;i++)
-    // {
-    //     velocities[i] = 0;
-    //     coordinates[i] = 0;
-    // }
-    // coordinates[0] = 320;
-    // coordinates[1] = 240;
-    // coordinates[2] = 0;
-
-    // coordinates[3] = 170;
-    // coordinates[4] = 240;
-    // coordinates[5] = 0;
-
-    // M[0] = 1098900;
-    // M[1] = 0.5974;
-
-
-    // velocities[0] = 0;
-    // velocities[1] = 0;
-    // velocities[2] = 0;
-    // velocities[3] = 0;
-    // velocities[4] = 2;
-    // velocities[5] = 0;
-
     visualize(argc, argv);
-
     return 0;
 }
