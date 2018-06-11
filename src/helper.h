@@ -1,7 +1,7 @@
 #ifndef helper
 #define helper
 
-#define NUMBER_OF_BODIES 1500   
+#define NUMBER_OF_BODIES 1500
 #define XYZ 3*NUMBER_OF_BODIES
 #define R 20
 #define R_min 18
@@ -22,7 +22,7 @@ double coordinates[XYZ];
 */
 double velocities[XYZ];
 
-/* Array  of particles velocities: 
+/* Array  of particles masses: 
 *   Ex: masses[0] = m(x0)
         masses[1] = v(y0)
         masses[2] = v(z0)
